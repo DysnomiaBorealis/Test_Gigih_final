@@ -1,0 +1,47 @@
+package com.example.gigih_final2.data.local
+
+enum class AvailableProvince(val id: String) {
+    ACEH("ID-AC"),
+    BALI("ID-BA"),
+    KEPULAUAN_BANGKA_BELITUNG("ID-BB"),
+    BANTEN("ID-BT"),
+    BENGKULU("ID-BE"),
+    JAWA_TENGAH("ID-JT"),
+    KALIMANTAN_TENGAH("ID-KT"),
+    SULAWESI_TENGAH("ID-ST"),
+    JAWA_TIMUR("ID-JI"),
+    KALIMANTAN_TIMUR("ID-KI"),
+    NUSA_TENGGARA_TIMUR("ID-NT"),
+    GORONTALO("ID-GO"),
+    DKI_JAKARTA("ID-JK"),
+    JAMBI("ID-JA"),
+    LAMPUNG("ID-LA"),
+    MALUKU("ID-MA"),
+    KALIMANTAN_UTARA("ID-KU"),
+    MALUKU_UTARA("ID-MU"),
+    SULAWESI_UTARA("ID-SA"),
+    SUMATERA_UTARA("ID-SU"),
+    PAPUA("ID-PA"),
+    RIAU("ID-RI"),
+    KEPULAUAN_RIAU("ID-KR"),
+    SULAWESI_TENGGARA("ID-SG"),
+    KALIMANTAN_SELATAN("ID-KS"),
+    SULAWESI_SELATAN("ID-SN"),
+    SUMATERA_SELATAN("ID-SS"),
+    DI_YOGYAKARTA("ID-YO"),
+    JAWA_BARAT("ID-JB"),
+    KALIMANTAN_BARAT("ID-KB"),
+    NUSA_TENGGARA_BARAT("ID-NB"),
+    PAPUA_BARAT("ID-PB"),
+    SULAWESI_BARAT("ID-SR"),
+    SUMATERA_BARAT("ID-SB")
+}
+
+enum class AvailableReportPeriod(val periodInSec: Int) {
+    ONE_WEEK(604800),
+    FIVE_DAYS(432000),
+    THREE_DAYS(259200),
+    TWO_DAYS(172800),
+    TODAY(86400)
+}
+

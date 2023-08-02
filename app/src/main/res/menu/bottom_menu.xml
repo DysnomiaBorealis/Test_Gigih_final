@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@id/reportFragment"
+        android:icon="@drawable/baseline_report_24"
+        android:title="@string/reports"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@id/floodFragment"
+        android:icon="@drawable/baseline_flood_24"
+        android:title="@string/flood"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@id/menuFragment"
+        android:icon="@drawable/baseline_menu_open_24"
+        android:title="@string/menu"
+        app:showAsAction="ifRoom" />
+</menu>
