@@ -9,7 +9,7 @@ class WaterLevelUseCaseImpl @Inject constructor(
     private val disasterRepository: DisasterRepository
 ) : WaterLevelUseCase {
 
-    // Define a threshold for water level. Adjust this value as needed.
+
     private val WATER_LEVEL_THRESHOLD = 50
 
     override suspend fun checkWaterLevelThreshold(): ResultState<Boolean> {
