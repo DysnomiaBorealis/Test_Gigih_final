@@ -10,6 +10,6 @@ sealed class ResultState<T>(
 
     class Idle<T> : ResultState<T>()
 
-    class Error<T>(message: String, data: T? = null) :
-        ResultState<T>(data, message)
+    class Error<T>(exception: Exception, data: T? = null) :
+        ResultState<T>(data, exception.message ?: "Unknown error")
 }

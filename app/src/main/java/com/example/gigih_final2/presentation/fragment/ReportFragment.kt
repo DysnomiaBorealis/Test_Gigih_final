@@ -5,56 +5,159 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
+import android.widget.Toast
+import androidx.fragment.app.viewModels
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.example.gigih_final2.R
+import com.example.gigih_final2.databinding.FragmentReportBinding
+import com.example.gigih_final2.domain.Entity.FloodEntity
+import com.example.gigih_final2.presentation.viewmodel.ReportViewModel
+import com.example.gigih_final2.utils.ResultState
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import dagger.hilt.android.AndroidEntryPoint
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+@AndroidEntryPoint
+class ReportFragment : Fragment(), OnMapReadyCallback {
 
-/**
- * A simple [Fragment] subclass.
- * Use the [ReportFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class ReportFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private var _binding: FragmentReportBinding? = null
+    private val binding get() = _binding!!
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+    private val viewModel: ReportViewModel by viewModels()
+    private lateinit var reportAdapter: ReportAdapter
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentReportBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        setupRecyclerView()
+        setupObservers()
+        setupSearch()
+        setupDisasterFilter()
+        setupRefreshButton()
+        setupGoogleMaps()
+    }
+
+    private fun setupRecyclerView() {
+        reportAdapter = ReportAdapter(listOf())
+        binding.rvReportList.adapter = reportAdapter
+    }
+
+    private fun setupObservers() {
+        viewModel.reports.observe(viewLifecycleOwner) { resultState ->
+            when (resultState) {
+                is ResultState.Loading -> {
+                    binding.loadingReport.visibility = View.VISIBLE
+                }
+                is ResultState.Success -> {
+                    binding.loadingReport.visibility = View.GONE
+                    resultState.data?.let { reportAdapter.updateData(it) }
+                }
+                is ResultState.Error -> {
+                    binding.loadingReport.visibility = View.GONE
+                    Toast.makeText(requireContext(), resultState.message, Toast.LENGTH_SHORT).show()
+                }
+                else -> {}
+            }
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_report, container, false)
+    private fun setupSearch() {
+        val autoCompleteTextView = binding.acTvSearchReport.editText as? AutoCompleteTextView
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, viewModel.availableProvince)
+        autoCompleteTextView?.setAdapter(adapter)
+        autoCompleteTextView?.setOnItemClickListener { _, _, position, _ ->
+            val selectedProvince = autoCompleteTextView.adapter.getItem(position) as String
+            viewModel.callApi(provinceName = selectedProvince)
+            Toast.makeText(requireContext(), "Fetching reports for $selectedProvince", Toast.LENGTH_SHORT).show()
+        }
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment ReportFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            ReportFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    private fun setupDisasterFilter() {
+        binding.rgReport.setOnCheckedChangeListener { _, checkedId ->
+            val disasterType = when (checkedId) {
+                R.id.rbReportFlood -> "Flood"
+                R.id.rbReportEarthquake -> "Earthquake"
+                R.id.rbReportFire -> "Fire"
+                R.id.rbReportHaze -> "Haze"
+                R.id.rbReportWind -> "Wind"
+                R.id.rbReportVolcano -> "Volcano"
+                else -> null
+            }
+            viewModel.callApi(provinceName = null, disasterType = disasterType)
+            Toast.makeText(requireContext(), "Filtering reports by $disasterType", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun setupRefreshButton() {
+        binding.btnReportRefresh.setOnClickListener {
+            viewModel.callApi(provinceName = null, disasterType = null)
+            Toast.makeText(requireContext(), "Refreshing reports", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    private fun setupGoogleMaps() {
+        val mapFragment = childFragmentManager.findFragmentById(R.id.mapFragment) as? SupportMapFragment
+        mapFragment?.getMapAsync(this)
+    }
+
+    override fun onMapReady(maps: GoogleMap) {
+        viewModel.reports.observe(viewLifecycleOwner) {
+            when (it) {
+                is ResultState.Error -> {
+                    //already handled in reports
+                }
+
+                is ResultState.Loading -> {
+                    //already handled in reports
+                }
+
+                is ResultState.Idle -> {
+                    // Handle the idle state if needed
+                }
+
+                is ResultState.Success -> {
+                    maps.clear()
+
+                    val reports = it.data ?: return@observe
+                    val coordinates = reports.getOrNull(0)?.coordinates ?: return@observe
+                    val latLng = LatLng(coordinates.lat, coordinates.lng)
+                    maps.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 8f))
+
+                    reports.forEach { data ->
+                        var snippet = "Disaster : ${data.disasterType}"
+                        val position = LatLng(data.coordinates.lat, data.coordinates.lng)
+
+                        if (data is FloodEntity) {
+                            snippet += ", Depth : ${data.floodDepth}"
+                        }
+
+                        val markerOpt = MarkerOptions()
+                            .position(position)
+                            .title(data.title)
+                            .snippet(snippet)
+
+                        maps.addMarker(markerOpt)
+                    }
                 }
             }
+        }
     }
+
 }

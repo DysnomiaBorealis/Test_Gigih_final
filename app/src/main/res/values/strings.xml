@@ -23,4 +23,7 @@
     <string name="refresh_button_description">Refresh Reports</string>
     <string name="alert">alert</string>
     <string name="app_ver">app ver</string>
+    <string name="water_level_alert">Water Level Alert</string>
+    <string name="water_level_alert_message">The water level has crossed the threshold!</string>
+
 </resources>

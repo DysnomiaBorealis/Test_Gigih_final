@@ -8,7 +8,6 @@ import com.example.gigih_final2.utils.ProvinceHelper
 import com.example.gigih_final2.utils.ResultState
 import com.example.gigih_final2.utils.convertReportApiResponseToDomain
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
@@ -24,7 +23,7 @@ class ReportRepositoryImpl @Inject constructor(
         disasterType: String?
     ): Flow<ResultState<List<Entities>>> = flow {
         try {
-            emit(ResultState.Loading())
+            emit(ResultState.Loading<List<Entities>>())
             kotlinx.coroutines.delay(500L)
             var code: String? = null
             val disaster = disasterType
@@ -48,20 +47,16 @@ class ReportRepositoryImpl @Inject constructor(
                 }
                 emit(ResultState.Success(reportList))
             } else {
-                emit(ResultState.Error("Bad Request. Api does not handle properly"))
+                emit(ResultState.Error(Exception("Bad Request. Api does not handle properly")))
             }
 
         } catch (e: IllegalArgumentException) {
-            emit(ResultState.Error(e.message.toString()))
+            emit(ResultState.Error(Exception(e.message.toString())))
         } catch (e: NoSuchElementException) {
-            emit(ResultState.Error(e.message.toString()))
+            emit(ResultState.Error(Exception(e.message.toString())))
         } catch (e: Exception) {
-            emit(ResultState.Error("Unexpected Error. ${e.message}"))
+            emit(ResultState.Error(Exception("Unexpected Error. ${e.message}")))
             Logger.e("NonsenseException : ${e.message}")
-        } catch (e: Exception) {
-            emit(ResultState.Error("Error. ${e.message}"))
-            Logger.e("Exception : ${e.message}")
         }
     }.flowOn(Dispatchers.IO)
-
-    }
+}

@@ -10,16 +10,16 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.fragment.app.FragmentContainerView xmlns:map="http://schemas.android.com/apk/res-auto"
+        <androidx.fragment.app.FragmentContainerView
             android:id="@+id/mapFragment"
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:node="replace"
-            tools:layout="@layout/fragment_maps" />
+            tools:node="replace" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/acTvSearchReport"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
@@ -66,26 +66,13 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
+
                 <RadioButton
                     android:id="@+id/rbReportAll"
                     style="@style/Radio"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/all_report" />
-
-                <RadioButton
-                    android:id="@+id/rbReportFlood"
-                    style="@style/Radio"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/flood" />
-
-                <RadioButton
-                    android:id="@+id/rbReportEarthquake"
-                    style="@style/Radio"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/earthquake" />
 
                 <RadioButton
                     android:id="@+id/rbReportFire"
@@ -109,6 +96,20 @@
                     android:text="@string/wind" />
 
                 <RadioButton
+                    android:id="@+id/rbReportFlood"
+                    style="@style/Radio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/flood" />
+
+                <RadioButton
+                    android:id="@+id/rbReportEarthquake"
+                    style="@style/Radio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/earthquake" />
+
+                <RadioButton
                     android:id="@+id/rbReportVolcano"
                     style="@style/Radio"
                     android:layout_width="wrap_content"
@@ -116,7 +117,6 @@
                     android:text="@string/volcano" />
             </RadioGroup>
         </HorizontalScrollView>
-
 
         <ProgressBar
             android:id="@+id/loadingReport"
@@ -128,44 +128,45 @@
             app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-    <LinearLayout
-    android:id="@+id/btmSheet"
-    style="@style/Widget.Material3.BottomSheet"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    app:behavior_peekHeight="250dp"
-    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
     <LinearLayout
+        android:id="@+id/btmSheet"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:paddingHorizontal="16dp">
+        app:behavior_peekHeight="250dp"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
-        <View
-            android:id="@+id/drag_handle"
-            android:layout_width="match_parent"
-            android:layout_height="4dp"
-            android:background="@drawable/drag_handle_background" />
-
-        <TextView
-            style="@style/TextAppearance.Material3.TitleMedium"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/latest_news" />
-
-        <Space
-            android:layout_width="wrap_content"
-            android:layout_height="16dp" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvReportList"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:listitem="@layout/item_report" />
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp">
+
+            <View
+                android:id="@+id/drag_handle"
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:background="@drawable/drag_handle_background" />
+
+            <TextView
+                style="@style/TextAppearance.Material3.TitleMedium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/latest_news" />
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="16dp" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvReportList"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:listitem="@layout/item_report" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
-</LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -1,5 +1,6 @@
 package com.example.gigih_final2.utils
 import android.icu.text.SimpleDateFormat
+import androidx.appcompat.app.AppCompatDelegate
 import com.example.gigih_final2.data.local.AvailableProvince
 import java.lang.Exception
 import java.lang.IllegalArgumentException
@@ -37,6 +38,16 @@ object DateHelper {
         val newFormat = SimpleDateFormat(SHOW_DATE_FORMAT, Locale.getDefault())
 
         return newFormat.format(date)
+    }
+}
+
+object ThemeHelper {
+    fun enableDarkTheme() {
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+    }
+
+    fun disableDarkTheme() {
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
     }
 }
 
